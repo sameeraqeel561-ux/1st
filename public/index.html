@@ -1489,11 +1489,9 @@
       <h2>Contact</h2>
       <div class="contact-grid">
 
-        <form class="contact-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
-          <input type="hidden" name="access_key" value="da94c2a3-a68a-43f9-9801-fcd6d5fc6ffb">
-          <input type="hidden" name="subject" value="New message from Muhammad Sameer Portfolio">
-          <input type="hidden" name="from_name" value="Sameer Portfolio">
-          <input type="checkbox" name="botcheck" style="display:none !important" tabindex="-1" autocomplete="off">
+        <form class="contact-form" id="contactForm" name="contact" action="/" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="contact">
+          <input type="text" name="bot-field" hidden tabindex="-1" autocomplete="off">
 
           <input type="text" name="name" placeholder="Name" required minlength="2">
           <input type="email" name="email" placeholder="Email" required>
@@ -1763,7 +1761,7 @@
         observer.observe(el);
       });
 
-      // ========== CONTACT FORM (Web3Forms AJAX) ==========
+      // ========== CONTACT FORM ==========
       const contactForm = document.getElementById('contactForm');
       const contactStatus = document.getElementById('contactStatus');
 
@@ -1780,26 +1778,22 @@
           contactStatus.style.display = 'none';
 
           const formData = new FormData(contactForm);
-          const object = Object.fromEntries(formData);
 
           try {
-            const res = await fetch('https://api.web3forms.com/submit', {
+            const res = await fetch('/', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
               },
-              body: JSON.stringify(object)
+              body: new URLSearchParams(formData).toString()
             });
 
-            const data = await res.json();
-
-            if (data.success) {
+            if (res.ok) {
               contactStatus.className = 'contact-status success';
               contactStatus.textContent = '✅ Thank you! Your message has been sent. I will get back to you soon.';
               contactForm.reset();
             } else {
-              throw new Error(data.message || 'Submission failed. Please try WhatsApp or direct email.');
+              throw new Error('Submission failed. Please try WhatsApp or direct email.');
             }
           } catch (err) {
             contactStatus.className = 'contact-status error';
